@@ -12,13 +12,15 @@ async fn main() {
 
     // build our application with a route
     let app = Router::new()
-    // `GET /` goes to `root`
-        .route("/", get(root))
-    // `POST /users` goes to `create_user`
-        .route("/users", post(create_user));
+        .route("/", get(root))               // `GET /` goes to `root`
+        .route("/users", post(create_user)); // `POST /users` goes to `create_user`
 
-    // run our app with hyper, listening globally on port 3000
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
+    // run our app with hyper, listening globally on port 3000(or 0 for any port)
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:0").await.unwrap();
+    let local_addr = listener.local_addr().unwrap();
+    let ip = local_addr.ip();
+    let port = local_addr.port();
+    println!("listening on {ip} {port}");
     let _ = axum::serve(listener, app).await;
 }
 
